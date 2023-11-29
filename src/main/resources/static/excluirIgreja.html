@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Igreja</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="adicionar.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+   
+    <a href="addIgreja.html">Adicionar Igreja</a>
+    <a href="attIgreja.html">Atualizar Igreja</a>
+    <a href="excluirIgreja.html">excluir Igreja</a>
+    
+        
+    <div class="box" >
+        <form id="igrejaForm">
+            <input type="text" id="nome" placeholder="Nome" name="nome" required/>
+            <br/>
+            <button type="button" onclick="excluirIgreja()">Excluir Igreja</button>
+            <a href="index.html" class="voltar">Voltar</a>
+        </form>
+    </div>
+    <script>
+        function excluirIgreja() {
+            var nomeIgreja = $('#nome').val();
+
+            $.ajax({
+                type: 'DELETE',
+                url: 'http://localhost:8080/controller/excluirIgreja/' + nomeIgreja,
+                success: function(response) {
+                    console.log(response);
+                    alert("Igreja excluída com sucesso!");
+                },
+                error: function(error) {
+                    console.error(error);
+                   
+                }
+            });
+        }
+       
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Atualizar Igreja</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="adicionar.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+   
+    <a href="addIgreja.html">Adicionar Igreja</a>
+    <a href="attIgreja.html">Atualizar Igreja</a>
+    <a href="excluirIgreja.html">excluir Igreja</a>
+       
+    <div class="box" >
+        <form id="igrejaForm">
+            <input type="text" id="nome" placeholder="Nome" name="nome" required/>
+          
+            <input type="text" id="local" placeholder="Local" name="local" required/>
+           
+            <input type="number" id="numero_maximo" placeholder="Número Máximo" name="numero_maximo" required/>
+
+            <input type="number" id="tamanho_igreja" placeholder="Tamanho da Igreja" name="tamanho_igreja" required/>
+    
+    
+        
+            <button type="button" onclick="atualizarIgreja()">Atualizar Igreja</button>
+            <a href="index.html" class="voltar">Voltar</a>
+        </form>
+    </div>
+    <script>
+        function atualizarIgreja() {
+            var formData = {
+                nome: $('#nome').val(),
+                local: $('#local').val(),
+                numero_maximo: $('#numero_maximo').val(),
+                tamanho_igreja: $('#tamanho_igreja').val()
+            };
+
+            $.ajax({
+                type: 'PUT',
+                url: 'http://localhost:8080/controller/atualizarIgreja/' + formData.nome + '/' + formData.local + '/' + formData.numero_maximo + '/' + formData.tamanho_igreja,
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log(response);
+                    alert("Igreja atualizada com sucesso!");
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+       
+    </script>
+</body>
+</html>

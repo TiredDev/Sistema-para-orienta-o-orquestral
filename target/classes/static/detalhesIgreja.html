@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Músico</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="adicionar.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <a href="addMusico.html">Adicionar Músico</a>
+    <a href="attMusico.html">Atualizar Músico</a>
+    <a href="excluirMusico.html">Excluir Músico</a>
+    <div class="box" >
+        <form id="musicoForm">
+            
+            <input type="text" id="nome" placeholder="Nome" name="nome" required/>
+    
+            <input type="text" id="nomeIgreja" placeholder="Nome da Igreja" name="nomeIgreja" required/>
+    
+            <input type="text" id="instrumento" placeholder="Instrumento" name="instrumento" required/>
+    
+            <button type="button" onclick="addMusico()">Adicionar Músico</button>
+            <a href="index.html" class="voltar">Voltar</a>
+        </form>
+    </div>
+    <div>
+        <center>
+            <h2>Inventário</h2>
+            <table id="inventario-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Nome da Igreja</th>
+                        <th>Instrumento</th>
+                    </tr>
+                </thead>
+                <tbody id="inventario-body"></tbody>
+            </table>
+        </center>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nomeIgreja1 = urlParams.get('nome');
+    
+            fetch('/controller/mostrarMusicos')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const inventarioBody = document.getElementById('inventario-body');
+                    data.forEach(musico => {
+                        if (musico.nomeIgreja === nomeIgreja1) {
+                            const row = document.createElement('tr');
+    
+                            // Adiciona um link à célula de nome
+                            const nomeCell = document.createElement('td');
+                            nomeCell.textContent = musico.nome;
+                            row.appendChild(nomeCell);
+    
+                            // Adiciona as outras células
+                            const nomeIgrejaCell = document.createElement('td');
+                            nomeIgrejaCell.textContent = musico.nomeIgreja;
+                            row.appendChild(nomeIgrejaCell);
+    
+                            const instrumentoCell = document.createElement('td');
+                            instrumentoCell.textContent = musico.instrumento;
+                            row.appendChild(instrumentoCell);
+    
+                            inventarioBody.appendChild(row);
+                        }
+                    });
+                })
+                .catch(error => console.error('Erro ao obter inventário de músicos:', error));
+        });
+    
+        function addMusico() {
+            const nome = $('#nome').val();
+            const nomeIgreja = $('#nomeIgreja').val();
+            const instrumento = $('#instrumento').val();
+            
+            // Porcentagens de músicos por tipo
+            const percentCordas = 50;
+            const percentMadeiras = 25;
+            const percentMetais = 25;
+    
+            // Capacidade máxima da igreja
+            const capacidadeMaxima = 15; // 16% da capacidade total
+            
+            // Calcula o número máximo permitido para cada tipo de músico
+            const capacidadeCordas = capacidadeMaxima * (percentCordas / 100);
+            const capacidadeMadeiras = capacidadeMaxima * (percentMadeiras / 100);
+            const capacidadeMetais = capacidadeMaxima * (percentMetais / 100);
+    
+            // Verifica se a igreja atingiu a capacidade máxima
+            fetch('/controller/buscarIgrejas/' + encodeURIComponent(nomeIgreja))
+        .then(response => response.json())
+        .then(data => {
+            const numeroMusicos = data.musicos.length;
+
+            // Verifica se a igreja está cheia
+            if (numeroMusicos >= capacidadeMaxima) {
+                alert("Igreja cheia! Não é possível adicionar mais músicos.");
+            } else {
+                // Busca músicos por nome de igreja
+                fetch('/controller/buscarMusicosPorIgreja/' + encodeURIComponent(nomeIgreja))
+                    .then(response => response.json())
+                    .then(musicosPorIgreja => {
+                        if(musico.instrumento == 'violino' || musico.instrumento == 'viola' || musico.instrumento == 'violoncelo'){
+                            const numeroCordas = numeroCordas +1;
+                        }
+                       if(musico.instrumento == 'flauta' || musico.intrumento == 'clarinete' || musico.instrumento == 'oboé'){
+                        const numeroMadeiras = numeroMadeiras +1;
+                       }
+                       if(musico.instrumento == 'Saxofone' || musico.intrumento =='trompete' || musico.instrumento == 'bombardino'){
+                        const numeroMetais = numeroMetais +1;
+                       }
+                       
+                       
+
+                        // Verifica se a adição ultrapassará a capacidade por tipo
+                        if (
+                            ( numeroCordas >= capacidadeCordas) ||
+                            ( numeroMadeiras >= capacidadeMadeiras) ||
+                            ( numeroMetais >= capacidadeMetais)
+                        ) {
+                            alert("Capacidade máxima de músicos desse tipo atingida!");
+                        } else {
+                            var formData = {
+                                nome: nome,
+                                nomeIgreja: nomeIgreja,
+                                instrumento: instrumento,
+                            };
+
+                            $.ajax({
+                                type: 'POST',
+                                url: 'http://localhost:8080/controller/addMusico',
+                                contentType: 'application/json',
+                                data: JSON.stringify(formData),
+                                success: function(response) {
+                                    alert("Músico cadastrado com sucesso!");
+                                    console.log(response);
+                                },
+                                error: function(error) {
+                                    console.error(error);
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Erro ao buscar músicos por igreja:', error));
+            }
+        })
+        .catch(error => console.error('Erro ao buscar informações da igreja:', error));
+}
+        
+    </script>
+</body>
+</html>

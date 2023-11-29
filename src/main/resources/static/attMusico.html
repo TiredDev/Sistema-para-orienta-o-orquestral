@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Atualizar Músico</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="adicionar.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+   
+    <a href="addMusico.html">Adicionar Musico</a>
+    <a href="attMusico.html">Atualizar Musico</a>
+    <a href="excluirMusico.html">excluir Musico</a>
+       
+    <div class="box" >
+        <form id="musicoForm">
+            <input type="text" id="nome" placeholder="Nome" name="nome" required/>
+          
+            <input type="text" id="nomeIgreja" placeholder="Nome da Igreja" name="nomeIgreja" required/>
+           
+            <input type="text" id="instrumento" placeholder="Instrumento" name="instrumento" required/>
+    
+            <button type="button" onclick="atualizarMusico()">Atualizar Músico</button>
+            <a href="index.html" class="voltar">Voltar</a>
+        </form>
+    </div>
+    <script>
+        function atualizarMusico() {
+            var formData = {
+                nome: $('#nome').val(),
+                nomeIgreja: $('#nomeIgreja').val(),
+                instrumento: $('#instrumento').val()
+            };
+
+            $.ajax({
+                type: 'PUT',
+                url: 'http://localhost:8080/controller/atualizarMusico/' + formData.nome + '/' + formData.nomeIgreja + '/' + formData.instrumento,
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.log(response);
+                    alert("Músico atualizado com sucesso!");
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+        $(".btn").on("click", function () {
+            $('.menu').toggleClass("show");
+        });
+    </script>
+</body>
+</html>

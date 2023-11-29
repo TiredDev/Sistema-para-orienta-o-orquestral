@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="addIgreja.html">Adicionar Igreja</a>
+    <a href="attIgreja.html">Atualizar Igreja</a>
+    <a href="excluirIgreja.html">excluir Igreja</a>
+</div>
+<div>
+    <center>
+        <h2>Inventário</h2>
+        <table id="inventario-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Local</th>
+                    <th>dias</th>
+                </tr>
+            </thead>
+            <tbody id="inventario-body"></tbody>
+        </table>
+    </center>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/controller/mostrarIgrejas')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const inventarioBody = document.getElementById('inventario-body');
+                data.forEach(igreja => {
+                    const row = document.createElement('tr');
+
+                    // Adiciona um link à célula de nome
+                    const nomeCell = document.createElement('td');
+                    const nomeLink = document.createElement('a');
+                    nomeLink.href = 'detalhesIgreja.html?nome=' + encodeURIComponent(igreja.nome);
+                    nomeLink.textContent = igreja.nome;
+                    nomeCell.appendChild(nomeLink);
+                    row.appendChild(nomeCell);
+
+                    // Adiciona as outras células
+                    const localCell = document.createElement('td');
+                    localCell.textContent = igreja.local;
+                    row.appendChild(localCell);
+
+
+                    inventarioBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Erro ao obter inventário:', error));
+    });
+</script>
+</body>
+</html>
